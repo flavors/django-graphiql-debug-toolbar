@@ -53,6 +53,11 @@ Add ``graphiql_debug_toolbar`` to your *INSTALLED_APPS* settings:
         ...
     ]
 
+Limitations
+-----------
+
+Panels rendering is not supported in multiprocess environment.
+
 ----
 
 Credits to `@jazzband`_ / `django-debug-toolbar`_.
