@@ -73,5 +73,5 @@ Credits to `@jazzband`_ / `django-debug-toolbar`_.
 .. |Codecov| image:: https://img.shields.io/codecov/c/github/flavors/django-graphiql-debug-toolbar.svg
    :target: https://codecov.io/gh/flavors/django-graphiql-debug-toolbar
 
-.. |Code Climate| image:: https://api.codeclimate.com/v1/badges/.../maintainability
+.. |Code Climate| image:: https://api.codeclimate.com/v1/badges/f73a62cdc95139a15a4b/maintainability
    :target: https://codeclimate.com/github/flavors/django-graphiql-debug-toolbar
