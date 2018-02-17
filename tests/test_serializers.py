@@ -8,9 +8,12 @@ from graphiql_debug_toolbar import serializers
 class SerializersTests(testcases.TestCase):
 
     def test_callable_json_encoder(self):
-        result = json.dumps({
-            '.': '.',
-            '..': lambda: '..',
-        }, cls=serializers.CallableJSONEncoder)
+        result = json.loads(
+            json.dumps({
+                '.': '.',
+                '..': lambda: '..',
+            }, cls=serializers.CallableJSONEncoder),
+        )
 
-        self.assertEqual(result, '{".": ".", "..": ".."}')
+        self.assertEqual(result['.'], '.')
+        self.assertEqual(result['..'], '..')
