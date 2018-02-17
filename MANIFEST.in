@@ -1,0 +1,9 @@
+include LICENSE
+include MANIFEST.in
+include README.rst
+
+recursive-include graphiql_debug_toolbar/static *
+recursive-include graphiql_debug_toolbar/templates *
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
