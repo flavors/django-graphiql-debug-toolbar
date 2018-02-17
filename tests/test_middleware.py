@@ -40,8 +40,8 @@ class MiddlewareTests(testcases.TestCase):
         response_mock = JsonResponse({'data': None})
         response = self.middleware.process_response(request, response_mock)
 
-        payload = json.loads(response.content)
         panel_enabled_mock.assert_called()
+        payload = json.loads(response.content.decode('utf-8'))
 
         self.assertIn('data', payload)
         self.assertIn('storeId', payload['debugToolbar'])

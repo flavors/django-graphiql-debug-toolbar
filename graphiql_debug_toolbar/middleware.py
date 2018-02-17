@@ -16,8 +16,12 @@ from .serializers import CallableJSONEncoder
 __all__ = ['DebugToolbarMiddleware']
 
 
+def get_content(response):
+    return force_text(response.content, encoding=response.charset)
+
+
 def get_payload(request, response, toolbar):
-    payload = json.loads(response.content, object_pairs_hook=OrderedDict)
+    payload = json.loads(get_content(response), object_pairs_hook=OrderedDict)
     payload['debugToolbar'] = OrderedDict([('panels', OrderedDict())])
 
     for panel in reversed(toolbar.enabled_panels):
@@ -60,8 +64,7 @@ class DebugToolbarMiddleware(BaseDebugToolbarMiddleware):
         response = super().process_response(request, response)
 
         if toolbar is not None and request.is_graphiql and not is_query:
-            content = force_text(response.content, encoding=response.charset)
-            response.content = content + render_to_string(
+            response.content = get_content(response) + render_to_string(
                 'graphiql_debug_toolbar/base.html')
 
         if toolbar is None or not is_query:
