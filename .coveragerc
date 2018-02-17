@@ -1,0 +1,3 @@
+[run]
+source = graphiql_debug_toolbar
+branch = True
