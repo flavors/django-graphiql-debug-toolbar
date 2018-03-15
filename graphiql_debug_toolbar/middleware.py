@@ -23,8 +23,8 @@ def get_content(response):
 def set_content(response, content):
     response.content = content
 
-    if response.get('Content-Length', None):
-        response['Content-Length'] = len(content)
+    if response.has_header('Content-Length'):
+        response['Content-Length'] = str(len(content))
     return response
 
 
