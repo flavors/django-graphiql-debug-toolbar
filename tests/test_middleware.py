@@ -24,8 +24,11 @@ class MiddlewareTests(testcases.TestCase):
         self.middleware.process_view(request, self.view_func, (), {})
 
         response_mock = HttpResponse()
+        response_mock['Content-Length'] = 0
+
         response = self.middleware.process_response(request, response_mock)
 
+        self.assertGreater(int(response['Content-Length']), 0)
         self.assertIn(b'debug-toolbar-parse', response.content)
 
     @patch('debug_toolbar.middleware.show_toolbar', return_value=True)
