@@ -29,6 +29,10 @@ Install last stable version from Pypi.
     pip install django-graphiql-debug-toolbar
 
 
+See the `documentation`_ for further guidance on setting *Django Debug Toolbar*.
+
+.. _documentation: https://django-debug-toolbar.readthedocs.io/en/stable/installation.html
+
 Add ``graphiql_debug_toolbar`` to your *INSTALLED_APPS* settings:
 
 .. code:: python
