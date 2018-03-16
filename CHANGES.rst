@@ -2,6 +2,14 @@ Changelog
 =========
 
 
+0.1.0
+-----
+
+Changes:
+ - Fixed subtitle selector for empty panels
+ - Improved JS selectors
+
+
 0.0.2
 -----
 
