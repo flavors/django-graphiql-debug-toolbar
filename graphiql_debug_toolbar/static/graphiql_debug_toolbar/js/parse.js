@@ -14,7 +14,7 @@
 
             $.each(debugToolbar.panels, function(id, panel) {
                 var $panel = $(`#${id} .djDebugPanelContent .djdt-scroll`);
-                var $subtitle = $(`#djDebugPanelList a.${id} small`);
+                var $subtitle = $(`#djDebugPanelList input[data-cookie="djdt${id}"]`).next().find('small');;
 
                 $(`#${id} .djDebugPanelTitle h3`).html(panel.title);
 
