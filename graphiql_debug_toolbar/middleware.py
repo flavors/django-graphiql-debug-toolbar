@@ -5,10 +5,8 @@ from collections import OrderedDict
 from django.template.loader import render_to_string
 from django.utils.encoding import force_text
 
-from debug_toolbar.middleware import (
+from debug_toolbar.middleware import \
     DebugToolbarMiddleware as BaseDebugToolbarMiddleware
-)
-
 from graphene_django.views import GraphQLView
 
 from .serializers import CallableJSONEncoder
