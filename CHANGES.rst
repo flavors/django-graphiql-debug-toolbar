@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+0.1.1
+-----
+
+Changes:
+ - Skipped exceptions
+
+
 0.1.0
 -----
 
