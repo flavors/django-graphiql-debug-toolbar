@@ -5,8 +5,7 @@ from collections import OrderedDict
 from django.template.loader import render_to_string
 from django.utils.encoding import force_text
 
-from debug_toolbar.middleware import \
-    DebugToolbarMiddleware as BaseDebugToolbarMiddleware
+from debug_toolbar import middleware
 from graphene_django.views import GraphQLView
 
 from .serializers import CallableJSONEncoder
@@ -48,7 +47,7 @@ def get_payload(request, response, toolbar):
     return payload
 
 
-class DebugToolbarMiddleware(BaseDebugToolbarMiddleware):
+class DebugToolbarMiddleware(middleware.DebugToolbarMiddleware):
 
     def process_request(self, request):
         request.is_graphiql = False
@@ -68,12 +67,18 @@ class DebugToolbarMiddleware(BaseDebugToolbarMiddleware):
             threading.current_thread().ident, None)
 
         response = super().process_response(request, response)
+        content_type = response.get('Content-Type', '').split(';')[0]
 
-        if toolbar is not None and request.is_graphiql and not is_query:
+        if (response.status_code == 200 and
+                toolbar is not None and
+                request.is_graphiql and
+                not is_query):
+
             template = render_to_string('graphiql_debug_toolbar/base.html')
             set_content(response, get_content(response) + template)
 
-        if toolbar is None or not is_query:
+        if (toolbar is None or not is_query or
+                content_type in middleware._HTML_TYPES):
             return response
 
         payload = get_payload(request, response, toolbar)
