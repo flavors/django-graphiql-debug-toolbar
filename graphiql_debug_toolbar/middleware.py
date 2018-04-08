@@ -13,20 +13,14 @@ from .serializers import CallableJSONEncoder
 __all__ = ['DebugToolbarMiddleware']
 
 
-def get_content(response):
-    return force_text(response.content, encoding=response.charset)
-
-
-def set_content(response, content):
-    response.content = content
-
+def set_content_length(response):
     if response.has_header('Content-Length'):
-        response['Content-Length'] = str(len(content))
-    return response
+        response['Content-Length'] = str(len(response.content))
 
 
 def get_payload(request, response, toolbar):
-    payload = json.loads(get_content(response), object_pairs_hook=OrderedDict)
+    content = force_text(response.content, encoding=response.charset)
+    payload = json.loads(content, object_pairs_hook=OrderedDict)
     payload['debugToolbar'] = OrderedDict([('panels', OrderedDict())])
 
     for panel in reversed(toolbar.enabled_panels):
@@ -74,13 +68,15 @@ class DebugToolbarMiddleware(middleware.DebugToolbarMiddleware):
                 request.is_graphiql and
                 not is_query):
 
-            template = render_to_string('graphiql_debug_toolbar/base.html')
-            set_content(response, get_content(response) + template)
+            response.write(render_to_string(
+                'graphiql_debug_toolbar/base.html'))
+            response.set_content_length(response)
 
         if (toolbar is None or not is_query or
                 content_type in middleware._HTML_TYPES):
             return response
 
         payload = get_payload(request, response, toolbar)
-        set_content(response, json.dumps(payload, cls=CallableJSONEncoder))
+        response.content = json.dumps(payload, cls=CallableJSONEncoder)
+        set_content_length(response)
         return response
