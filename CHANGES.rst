@@ -1,31 +1,26 @@
 Changelog
 =========
 
-
 0.1.1
 -----
 
-Changes:
- - Skipped exceptions
+* Skipped exceptions
 
 
 0.1.0
 -----
 
-Changes:
- - Fixed subtitle selector for empty panels
- - Improved JS selectors
+* Fixed subtitle selector for empty panels
+* Improved JS selectors
 
 
 0.0.2
 -----
 
-Changes:
- - Adjusted Content-Length response header
+* Adjusted Content-Length response header
 
 
 0.0.1
 -----
 
-Changes:
- - xin chào!
+* xin chào!
