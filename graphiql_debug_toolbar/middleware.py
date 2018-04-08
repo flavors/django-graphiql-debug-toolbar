@@ -44,17 +44,17 @@ def get_payload(request, response, toolbar):
 class DebugToolbarMiddleware(middleware.DebugToolbarMiddleware):
 
     def process_request(self, request):
-        request.is_graphiql = False
+        request.is_graphql_view = False
         return super().process_request(request)
 
     def process_view(self, request, view_func, *args):
-        request.is_graphiql = hasattr(view_func, 'view_class') and\
+        request.is_graphql_view = hasattr(view_func, 'view_class') and\
             issubclass(view_func.view_class, GraphQLView)
 
         return super().process_view(request, view_func, *args)
 
     def process_response(self, request, response):
-        is_query = request.is_graphiql and\
+        is_query = request.is_graphql_view and\
             request.content_type == 'application/json'
 
         toolbar = self.__class__.debug_toolbars.get(
@@ -65,7 +65,7 @@ class DebugToolbarMiddleware(middleware.DebugToolbarMiddleware):
 
         if (response.status_code == 200 and
                 toolbar is not None and
-                request.is_graphiql and
+                request.is_graphql_view and
                 not is_query):
 
             response.write(render_to_string(
