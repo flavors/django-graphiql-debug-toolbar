@@ -70,7 +70,7 @@ class DebugToolbarMiddleware(middleware.DebugToolbarMiddleware):
 
             response.write(render_to_string(
                 'graphiql_debug_toolbar/base.html'))
-            response.set_content_length(response)
+            set_content_length(response)
 
         if (toolbar is None or not is_query or
                 content_type in middleware._HTML_TYPES):
