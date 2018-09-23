@@ -55,6 +55,22 @@ Add ``graphiql_debug_toolbar`` to your *INSTALLED_APPS* settings:
         ...
     ]
 
+The *Debug Toolbar* is shown only if your IP is listed in the `INTERNAL_IPS` setting.  (You can change this logic with the `SHOW_TOOLBAR_CALLBACK` option.) 
+
+.. code:: python
+
+    INTERNAL_IPS = ['127.0.0.1', '...']
+
+Dockerize `INTERNAL_IPS`
+
+.. code:: python
+
+    import socket
+
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS += [ip[:-1] + '1' for ip in ips]
+
+
 Limitations
 -----------
 
