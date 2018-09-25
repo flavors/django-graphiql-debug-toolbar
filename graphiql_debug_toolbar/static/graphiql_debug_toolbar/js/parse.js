@@ -1,45 +1,47 @@
-(function($) {
+(function() {
     var parse = JSON.parse;
-    var data = $('#debug-toolbar-parse').data();
+    var djDebug = document.querySelector('#djDebug');
+    var djGraphiQLDebug = document.querySelector('#djGraphiQLDebug');
+    var render_panel_url = djGraphiQLDebug.getAttribute('data-render-panel-url');
 
-    $('#djDebug').data('render-panel-url', data.renderPanelUrl);
+    djDebug.setAttribute('data-render-panel-url', render_panel_url);
 
     JSON.parse = function(response) {
         var payload = parse(response);
 
-        if (payload && payload.hasOwnProperty('debugToolbar')) {
-            var debugToolbar = payload.debugToolbar;
-            var $debugPanelList = $('#djDebugPanelList');
+        if (payload === null || !payload.hasOwnProperty('debugToolbar')) return payload;
 
-            delete payload.debugToolbar;
+        var debugToolbar = payload.debugToolbar;
+        var djDebugPanelList = document.querySelector('#djDebugPanelList');
+        delete payload.debugToolbar;
 
-            $.each(debugToolbar.panels, function(id, panel) {
-                var $subtitle = $debugPanelList.find(`input[data-cookie="djdt${id}"]`).next().find('small');
+        for (var id in debugToolbar.panels) {
+            var panel = debugToolbar.panels[id];
+            var djDebugButton = djDebugPanelList.querySelector('[data-cookie="djdt' + id + '"]');
+            var subtitle = djDebugButton.nextElementSibling.querySelector('small');
 
-                if ($subtitle.text() != panel.subtitle) {
-                    $subtitle.fadeOut(100, function() {
-                        $(this).text(panel.subtitle).fadeIn(200);
-                    });
+            if (subtitle !== null) subtitle.textContent = panel.subtitle;
+
+            if (panel.title !== null) {
+                var djDebugPanel = document.querySelector('#' + id);
+                var djDebugContent = djDebugPanel.querySelector('.djdt-scroll');
+
+                djDebugPanel.querySelector('h3').innerHTML = panel.title;
+                djDebugContent.innerHTML = '';
+
+                if (djDebugContent.parentNode.querySelector('img') === null) {
+                    var loader = document.createElement('img');
+                    loader.src = djGraphiQLDebug.getAttribute('data-loader-url');
+                    loader.className = 'djdt-loader';
+                    loader.alt = 'loading';
+                    djDebugContent.parentNode.insertBefore(loader, djDebugContent);
                 }
-
-                if (panel.title !== null) {
-                    var $panel = $(`#${id}`);
-                    var $content = $panel.find('.djdt-scroll');
-
-                    $panel.find('h3:first').html(panel.title);
-                    $content.empty();
-
-                    if (!$content.parent().find('img').length) {
-                        $('<img />', {
-                            src: data.loaderUrl,
-                            alt: 'loading',
-                            class: 'djdt-loader'
-                        }).insertBefore($content);
-                    }
-                }
-            });
-            $('#djDebug').data('store-id', debugToolbar.storeId);
+            }
         }
+        // Support for django-debug-toolbar 1.8, 1.9, 1.9.1
+        if (djdt.hasOwnProperty('jQuery')) djdt.jQuery(djDebug).removeData('store-id');
+
+        djDebug.setAttribute('data-store-id', debugToolbar.storeId);
         return payload;
     }
-})(djdt.jQuery);
+})();
