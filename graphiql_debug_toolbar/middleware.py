@@ -24,6 +24,9 @@ def get_payload(request, response, toolbar):
     payload['debugToolbar'] = OrderedDict([('panels', OrderedDict())])
 
     for panel in reversed(toolbar.enabled_panels):
+        if panel.panel_id == 'TemplatesPanel':
+            continue
+
         panel.generate_stats(request, response)
 
         if panel.has_content:
