@@ -29,7 +29,7 @@ class MiddlewareTests(testcases.TestCase):
         response = self.middleware.process_response(request, response_mock)
 
         self.assertGreater(int(response['Content-Length']), 0)
-        self.assertIn(b'debug-toolbar-parse', response.content)
+        self.assertIn(b'djGraphiQLDebug', response.content)
 
     @patch('debug_toolbar.middleware.show_toolbar', return_value=True)
     @patch('debug_toolbar.panels.Panel.enabled', new_callable=PropertyMock)
