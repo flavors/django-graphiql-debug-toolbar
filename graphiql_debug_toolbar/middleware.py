@@ -57,26 +57,25 @@ class DebugToolbarMiddleware(middleware.DebugToolbarMiddleware):
         return super().process_view(request, view_func, *args)
 
     def process_response(self, request, response):
-        is_query = request.is_graphql_view and\
-            request.content_type == 'application/json'
-
-        toolbar = self.__class__.debug_toolbars.get(
+        toolbar = type(self).debug_toolbars.get(
             threading.current_thread().ident, None)
 
         response = super().process_response(request, response)
         content_type = response.get('Content-Type', '').split(';')[0]
+        html_type = content_type in middleware._HTML_TYPES
 
         if (response.status_code == 200 and
                 toolbar is not None and
                 request.is_graphql_view and
-                not is_query):
+                html_type):
 
-            response.write(render_to_string(
-                'graphiql_debug_toolbar/base.html'))
+            template = render_to_string('graphiql_debug_toolbar/base.html')
+            response.write(template)
             set_content_length(response)
 
-        if (toolbar is None or not is_query or
-                content_type in middleware._HTML_TYPES):
+        if toolbar is None or html_type or not (
+                request.is_graphql_view and
+                request.content_type == 'application/json'):
             return response
 
         payload = get_payload(request, response, toolbar)
