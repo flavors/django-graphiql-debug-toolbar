@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.1.3
+-----
+
+* Included debug script for html types
+
 0.1.2
 -----
 
