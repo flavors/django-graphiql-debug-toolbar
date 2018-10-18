@@ -12,13 +12,13 @@ from graphiql_debug_toolbar.middleware import DebugToolbarMiddleware
 class MiddlewareTests(testcases.TestCase):
 
     def setUp(self):
-        self.factory = RequestFactory()
+        self.request_factory = RequestFactory()
         self.middleware = DebugToolbarMiddleware()
         self.view_func = GraphQLView.as_view()
 
     @patch('debug_toolbar.middleware.show_toolbar', return_value=True)
     def test_graphiql(self, *args):
-        request = self.factory.get('/')
+        request = self.request_factory.get('/')
 
         self.middleware.process_request(request)
         self.middleware.process_view(request, self.view_func, (), {})
@@ -35,7 +35,8 @@ class MiddlewareTests(testcases.TestCase):
     @patch('debug_toolbar.panels.Panel.enabled', new_callable=PropertyMock)
     def test_query(self, panel_enabled_mock, *args):
         panel_enabled_mock.return_value = True
-        request = self.factory.post('/', content_type='application/json')
+        request = self.request_factory\
+            .post('/', content_type='application/json')
 
         self.middleware.process_request(request)
         self.middleware.process_view(request, self.view_func, (), {})
@@ -50,7 +51,7 @@ class MiddlewareTests(testcases.TestCase):
         self.assertIn('storeId', payload['debugToolbar'])
 
     def test_hidden_toolbar(self):
-        request = self.factory.get('/')
+        request = self.request_factory.get('/')
 
         self.middleware.process_request(request)
 
