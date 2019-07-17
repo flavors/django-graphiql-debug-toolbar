@@ -48,19 +48,19 @@ class DebugToolbarMiddleware(middleware.DebugToolbarMiddleware):
 
     def process_request(self, request):
         request.is_graphql_view = False
-        return super().process_request(request)
+        return super(DebugToolbarMiddleware, self).process_request(request)
 
     def process_view(self, request, view_func, *args):
         request.is_graphql_view = hasattr(view_func, 'view_class') and\
             issubclass(view_func.view_class, GraphQLView)
 
-        return super().process_view(request, view_func, *args)
+        return super(DebugToolbarMiddleware, self).process_view(request, view_func, *args)
 
     def process_response(self, request, response):
         toolbar = type(self).debug_toolbars.get(
             threading.current_thread().ident, None)
 
-        response = super().process_response(request, response)
+        response = super(DebugToolbarMiddleware, self).process_response(request, response)
         content_type = response.get('Content-Type', '').split(';')[0]
         html_type = content_type in middleware._HTML_TYPES
 

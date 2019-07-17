@@ -6,4 +6,4 @@ class CallableJSONEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if callable(obj):
             return obj()
-        return super().default(obj)
+        return super(CallableJSONEncoder, self).default(obj)
