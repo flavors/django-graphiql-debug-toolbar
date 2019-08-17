@@ -4,8 +4,9 @@ from collections import OrderedDict
 from django.template.loader import render_to_string
 from django.utils.encoding import force_text
 
-from debug_toolbar.middleware import _HTML_TYPES, get_show_toolbar
+from debug_toolbar.middleware import _HTML_TYPES
 from debug_toolbar.middleware import DebugToolbarMiddleware as BaseMiddleware
+from debug_toolbar.middleware import get_show_toolbar
 from debug_toolbar.toolbar import DebugToolbar
 from graphene_django.views import GraphQLView
 
