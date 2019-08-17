@@ -26,7 +26,7 @@ class DebugToolbarMiddlewareTests(testcases.TestCase):
         middleware.process_view(request, self.view_func, (), {})
         response = middleware(request)
 
-        show_toolbar_mock.assert_called()
+        show_toolbar_mock.assert_called_with(request)
         self.assertGreater(int(response['Content-Length']), 0)
         self.assertIn(b'djGraphiQLDebug', response.content)
 
