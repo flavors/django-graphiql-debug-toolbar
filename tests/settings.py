@@ -9,16 +9,13 @@ DATABASES = {
 }
 
 SECRET_KEY = 'test'
-
 ROOT_URLCONF = 'tests.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'OPTIONS': {
-            'loaders': [
-                'django.template.loaders.app_directories.Loader',
-            ],
-        },
+TEMPLATES = [{
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'OPTIONS': {
+        'loaders': [
+            'django.template.loaders.app_directories.Loader',
+        ],
     },
-]
+}]

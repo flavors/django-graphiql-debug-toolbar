@@ -1,5 +1,5 @@
 import json
-from unittest.mock import PropertyMock, patch
+from unittest.mock import Mock, PropertyMock, patch
 
 from django.http import HttpResponse, JsonResponse
 from django.test import RequestFactory, testcases
@@ -9,53 +9,48 @@ from graphene_django.views import GraphQLView
 from graphiql_debug_toolbar.middleware import DebugToolbarMiddleware
 
 
-class MiddlewareTests(testcases.TestCase):
+class DebugToolbarMiddlewareTests(testcases.TestCase):
 
     def setUp(self):
         self.request_factory = RequestFactory()
-        self.middleware = DebugToolbarMiddleware()
         self.view_func = GraphQLView.as_view()
 
     @patch('debug_toolbar.middleware.show_toolbar', return_value=True)
-    def test_graphiql(self, *args):
+    def test_graphiql(self, show_toolbar_mock):
         request = self.request_factory.get('/')
+        http_response = HttpResponse()
+        http_response['Content-Length'] = 0
+        get_response_mock = Mock(return_value=http_response)
 
-        self.middleware.process_request(request)
-        self.middleware.process_view(request, self.view_func, (), {})
+        middleware = DebugToolbarMiddleware(get_response_mock)
+        middleware.process_view(request, self.view_func, (), {})
+        response = middleware(request)
 
-        response_mock = HttpResponse()
-        response_mock['Content-Length'] = 0
-
-        response = self.middleware.process_response(request, response_mock)
-
+        show_toolbar_mock.assert_called()
         self.assertGreater(int(response['Content-Length']), 0)
         self.assertIn(b'djGraphiQLDebug', response.content)
 
-    @patch('debug_toolbar.middleware.show_toolbar', return_value=True)
     @patch('debug_toolbar.panels.Panel.enabled', new_callable=PropertyMock)
-    def test_query(self, panel_enabled_mock, *args):
+    def test_query(self, panel_enabled_mock):
         panel_enabled_mock.return_value = True
-        request = self.request_factory\
-            .post('/', content_type='application/json')
 
-        self.middleware.process_request(request)
-        self.middleware.process_view(request, self.view_func, (), {})
+        request = self.request_factory.post('/')
+        get_response_mock = Mock(return_value=JsonResponse({'data': None}))
 
-        response_mock = JsonResponse({'data': None})
-        response = self.middleware.process_response(request, response_mock)
+        middleware = DebugToolbarMiddleware(get_response_mock)
+        middleware.process_view(request, self.view_func, (), {})
 
+        response = middleware(request)
         payload = json.loads(response.content.decode('utf-8'))
-        panel_enabled_mock.assert_called_with()
 
+        panel_enabled_mock.assert_called_with()
         self.assertIn('data', payload)
         self.assertIn('storeId', payload['debugToolbar'])
 
     def test_hidden_toolbar(self):
-        request = self.request_factory.get('/')
-
-        self.middleware.process_request(request)
-
-        response_mock = HttpResponse('.')
-        response = self.middleware.process_response(request, response_mock)
+        request = self.request_factory.post('/')
+        get_response_mock = Mock(return_value=HttpResponse('.'))
+        middleware = DebugToolbarMiddleware(get_response_mock)
+        response = middleware(request)
 
         self.assertEqual(b'.', response.content)
