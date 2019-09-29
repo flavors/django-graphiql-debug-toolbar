@@ -47,10 +47,25 @@ class DebugToolbarMiddlewareTests(testcases.TestCase):
         self.assertIn('data', payload)
         self.assertIn('storeId', payload['debugToolbar'])
 
-    def test_hidden_toolbar(self):
+    @patch('graphiql_debug_toolbar.middleware.get_show_toolbar')
+    def test_hidden_toolbar(self, show_toolbar_mock):
+        show_toolbar_mock.return_value = lambda request: False
+
         request = self.request_factory.post('/')
-        get_response_mock = Mock(return_value=HttpResponse('.'))
+        get_response_mock = Mock(return_value=HttpResponse())
+
         middleware = DebugToolbarMiddleware(get_response_mock)
+        middleware.process_view(request, self.view_func, (), {})
         response = middleware(request)
 
-        self.assertEqual(b'.', response.content)
+        show_toolbar_mock.assert_called_with()
+        self.assertNotIn(b'djGraphiQLDebug', response.content)
+
+    def test_process_unknown_view(self):
+        request = self.request_factory.post('/')
+        get_response_mock = Mock(return_value=HttpResponse())
+
+        middleware = DebugToolbarMiddleware(get_response_mock)
+        middleware.process_view(request, None, (), {})
+
+        self.assertFalse(hasattr('request', '_graphql_view'))
