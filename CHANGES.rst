@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.1.4
+-----
+
+* Added support for django-debug-toolbar v2
+
 0.1.3
 -----
 
