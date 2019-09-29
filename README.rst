@@ -1,7 +1,7 @@
 Django GraphiQL Debug Toolbar
 =============================
 
-|Pypi| |Wheel| |Build Status| |Codecov|
+|Pypi| |Build Status| |Codecov|
 
 
 Django `Debug Toolbar`_ for `GraphiQL`_ IDE
@@ -85,9 +85,6 @@ Credits to `@jazzband`_ / `django-debug-toolbar`_.
 
 
 .. |Pypi| image:: https://img.shields.io/pypi/v/django-graphiql-debug-toolbar.svg
-   :target: https://pypi.python.org/pypi/django-graphiql-debug-toolbar
-
-.. |Wheel| image:: https://img.shields.io/pypi/wheel/django-graphiql-debug-toolbar.svg
    :target: https://pypi.python.org/pypi/django-graphiql-debug-toolbar
 
 .. |Build Status| image:: https://travis-ci.org/flavors/django-graphiql-debug-toolbar.svg?branch=master
