@@ -1,9 +1,11 @@
+import functools
 import json
 from collections import OrderedDict
 
 from django.template.loader import render_to_string
 from django.utils.encoding import force_text
 
+from debug_toolbar import middleware as mmod
 from debug_toolbar.middleware import _HTML_TYPES
 from debug_toolbar.middleware import DebugToolbarMiddleware as BaseMiddleware
 from debug_toolbar.middleware import get_show_toolbar
@@ -13,6 +15,23 @@ from graphene_django.views import GraphQLView
 from .serializers import CallableJSONEncoder
 
 __all__ = ['DebugToolbarMiddleware']
+
+
+class _DebugToolbar(DebugToolbar):
+    def __init__(self, middleware, *args, **kwargs):
+        middleware._toolbar = self
+        super().__init__(*args, **kwargs)
+
+
+class MockToolbar(object):
+    def __init__(self, middleware):
+        self._middleware = middleware
+
+    def __enter__(self):
+        mmod.DebugToolbar = functools.partial(_DebugToolbar, self._middleware)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        mmod.DebugToolbar = DebugToolbar
 
 
 def set_content_length(response):
@@ -58,7 +77,8 @@ class DebugToolbarMiddleware(BaseMiddleware):
         if not get_show_toolbar()(request) or request.is_ajax():
             return self.get_response(request)
 
-        response = super().__call__(request)
+        with MockToolbar(self):
+            response = super().__call__(request)
         content_type = response.get('Content-Type', '').split(';')[0]
         html_type = content_type in _HTML_TYPES
         graphql_view = getattr(request, '_graphql_view', False)
@@ -72,20 +92,7 @@ class DebugToolbarMiddleware(BaseMiddleware):
                 graphql_view and content_type == 'application/json'):
             return response
 
-        toolbar = DebugToolbar(request, self.get_response)
-
-        for panel in toolbar.enabled_panels:
-            panel.enable_instrumentation()
-        try:
-            response = toolbar.process_request(request)
-        finally:
-            for panel in reversed(toolbar.enabled_panels):
-                panel.disable_instrumentation()
-
-        response = self.generate_server_timing_header(
-            response,
-            toolbar.enabled_panels,
-        )
+        toolbar = self._toolbar
 
         payload = get_payload(request, response, toolbar)
         response.content = json.dumps(payload, cls=CallableJSONEncoder)
