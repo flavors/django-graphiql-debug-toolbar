@@ -31,6 +31,32 @@ class DebugToolbarMiddlewareTests(testcases.TestCase):
         self.assertIn(b'djGraphiQLDebug', response.content)
 
     @patch('debug_toolbar.panels.Panel.enabled', new_callable=PropertyMock)
+    def test_graphiql_introspection_query(self, panel_enabled_mock):
+        panel_enabled_mock.return_value = True
+
+        def _test_request():
+            request = self.request_factory.post('/')
+            get_response_mock = Mock(return_value=JsonResponse({'data': { '__schema': ''}}))
+
+            middleware = DebugToolbarMiddleware(get_response_mock)
+            middleware.process_view(request, self.view_func, (), {})
+
+            response = middleware(request)
+            payload = json.loads(response.content.decode('utf-8'))
+
+            panel_enabled_mock.assert_called_with()
+            self.assertIn('data', payload)
+            return payload
+
+        with self.settings(GRAPHIQL_DEBUG_TOOLBAR_INTROSPECTIONS=False):
+            payload = _test_request()
+            self.assertNotIn('debugToolbar', payload)
+
+        with self.settings(GRAPHIQL_DEBUG_TOOLBAR_INTROSPECTIONS=True):
+            payload = _test_request()
+            self.assertIn('debugToolbar', payload)
+
+    @patch('debug_toolbar.panels.Panel.enabled', new_callable=PropertyMock)
     def test_query(self, panel_enabled_mock):
         panel_enabled_mock.return_value = True
 

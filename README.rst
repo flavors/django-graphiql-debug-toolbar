@@ -70,6 +70,12 @@ Dockerize ``INTERNAL_IPS``
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS += [ip[:-1] + '1' for ip in ips]
 
+Configuration
+-------------
+
+By default, introspection queries will be ignored and no debug information will be added. If you'd like to include them as well, set 
+``GRAPHIQL_DEBUG_TOOLBAR_INTROSPECTIONS=True`` in settings.
+
 
 Limitations
 -----------
