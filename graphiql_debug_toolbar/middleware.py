@@ -51,7 +51,7 @@ class DebugToolbarMiddleware(BaseMiddleware):
 
     def process_view(self, request, view_func, *args):
         if hasattr(view_func, 'view_class') and\
-                issubclass(view_func.view_class, GraphQLView):
+                issubclass(view_func.view_class, GraphQLView) and view_func.view_class.graphiql:
             request._graphql_view = True
 
     def __call__(self, request):
