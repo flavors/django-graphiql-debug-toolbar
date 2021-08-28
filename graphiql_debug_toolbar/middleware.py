@@ -68,10 +68,12 @@ def get_payload(request, response, toolbar):
 
 class DebugToolbarMiddleware(BaseMiddleware):
     def process_view(self, request, view_func, *args):
-        if hasattr(view_func, "view_class") and issubclass(
-            view_func.view_class, GraphQLView
+        if (
+            hasattr(view_func, "view_class")
+            and issubclass(view_func.view_class, GraphQLView)
+            and view_func.view_initkwargs.get("graphiql")
         ):
-            request._graphql_view = True
+            request._graphiql = True
 
     def __call__(self, request):
         if not get_show_toolbar()(request) or request.is_ajax():
