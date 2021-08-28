@@ -20,5 +20,10 @@ TEMPLATES = [
                 "django.template.loaders.app_directories.Loader",
             ],
         },
-    }
+    },
 ]
+
+DEBUG_TOOLBAR_CONFIG = {
+    "RENDER_PANELS": False,
+    "DISABLE_PANELS": [],
+}
