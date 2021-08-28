@@ -54,7 +54,6 @@ classifiers = [
 python = "^3.6"
 
 Django = ">=2.0"
-graphene = ">=2.1.5"
 graphene-django = ">=2.0.0"
 django-debug-toolbar = ">=3.1"
 
