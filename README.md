@@ -9,12 +9,10 @@
 
 ![Graphiql Debug Toolbar](https://user-images.githubusercontent.com/5514990/36340937-1937ee68-1419-11e8-8477-40622e98c312.gif)
 
-
 ## Dependencies
 
-* Python ≥ 3.6
-* Django ≥ 2.2
-
+  * Python ≥ 3.6
+  * Django ≥ 2.2
 
 ## Installation
 
