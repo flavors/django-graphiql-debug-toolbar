@@ -14,7 +14,7 @@ from graphene_django.views import GraphQLView
 
 from .serializers import CallableJSONEncoder
 
-__all__ = ['DebugToolbarMiddleware']
+__all__ = ["DebugToolbarMiddleware"]
 
 
 class _DebugToolbar(DebugToolbar):
@@ -35,17 +35,17 @@ class MockToolbar(object):
 
 
 def set_content_length(response):
-    if response.has_header('Content-Length'):
-        response['Content-Length'] = str(len(response.content))
+    if response.has_header("Content-Length"):
+        response["Content-Length"] = str(len(response.content))
 
 
 def get_payload(request, response, toolbar):
     content = force_text(response.content, encoding=response.charset)
     payload = json.loads(content, object_pairs_hook=OrderedDict)
-    payload['debugToolbar'] = OrderedDict([('panels', OrderedDict())])
+    payload["debugToolbar"] = OrderedDict([("panels", OrderedDict())])
 
     for panel in reversed(toolbar.enabled_panels):
-        if panel.panel_id == 'TemplatesPanel':
+        if panel.panel_id == "TemplatesPanel":
             continue
 
         panel.generate_stats(request, response)
@@ -56,21 +56,21 @@ def get_payload(request, response, toolbar):
         else:
             title = None
 
-        payload['debugToolbar']['panels'][panel.panel_id] = {
-            'title': title,
-            'subtitle': panel.nav_subtitle,
+        payload["debugToolbar"]["panels"][panel.panel_id] = {
+            "title": title,
+            "subtitle": panel.nav_subtitle,
         }
 
     toolbar.store()
-    payload['debugToolbar']['storeId'] = toolbar.store_id
+    payload["debugToolbar"]["storeId"] = toolbar.store_id
     return payload
 
 
 class DebugToolbarMiddleware(BaseMiddleware):
-
     def process_view(self, request, view_func, *args):
-        if hasattr(view_func, 'view_class') and\
-                issubclass(view_func.view_class, GraphQLView):
+        if hasattr(view_func, "view_class") and issubclass(
+            view_func.view_class, GraphQLView
+        ):
             request._graphql_view = True
 
     def __call__(self, request):
@@ -79,17 +79,16 @@ class DebugToolbarMiddleware(BaseMiddleware):
 
         with MockToolbar(self):
             response = super().__call__(request)
-        content_type = response.get('Content-Type', '').split(';')[0]
+        content_type = response.get("Content-Type", "").split(";")[0]
         html_type = content_type in _HTML_TYPES
-        graphql_view = getattr(request, '_graphql_view', False)
+        graphql_view = getattr(request, "_graphql_view", False)
 
         if response.status_code == 200 and graphql_view and html_type:
-            template = render_to_string('graphiql_debug_toolbar/base.html')
+            template = render_to_string("graphiql_debug_toolbar/base.html")
             response.write(template)
             set_content_length(response)
 
-        if html_type or not (
-                graphql_view and content_type == 'application/json'):
+        if html_type or not (graphql_view and content_type == "application/json"):
             return response
 
         toolbar = self._toolbar
