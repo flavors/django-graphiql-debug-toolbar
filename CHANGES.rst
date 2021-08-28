@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.2.0
+-----
+
+* Added DebugToolbar monkey patch
+* Fixed dup queries
+* Added GraphQL batch support
+* Removed Django <2.3 support
+* Added pyproject.toml
+
 0.1.4
 -----
 
