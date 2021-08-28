@@ -1,4 +1,5 @@
 INSTALLED_APPS = [
+    "debug_toolbar",
     "graphiql_debug_toolbar",
 ]
 
