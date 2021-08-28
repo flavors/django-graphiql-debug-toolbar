@@ -33,5 +33,5 @@
 
         delete data.debugToolbar;
         return data;
-    }
+    };
 })(JSON);
