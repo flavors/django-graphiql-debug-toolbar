@@ -8,12 +8,12 @@ from setuptools import find_packages, setup
 
 def get_long_description():
     for filename in ('README.rst',):
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             yield f.read()
 
 
 def get_version(package):
-    with open(os.path.join(package, '__init__.py')) as f:
+    with open(os.path.join(package, '__init__.py'), encoding='utf-8') as f:
         pattern = r'^__version__ = [\'"]([^\'"]*)[\'"]'
         return re.search(pattern, f.read(), re.MULTILINE).group(1)
 
