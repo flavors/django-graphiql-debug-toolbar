@@ -2,6 +2,7 @@ import functools
 import json
 from collections import OrderedDict
 
+from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.encoding import force_text
 
@@ -42,6 +43,11 @@ def set_content_length(response):
 def get_payload(request, response, toolbar):
     content = force_text(response.content, encoding=response.charset)
     payload = json.loads(content, object_pairs_hook=OrderedDict)
+
+    if not getattr(settings, 'GRAPHIQL_DEBUG_TOOLBAR_INTROSPECTIONS', False):
+        if payload.get('data', None) is not None and all(_.startswith('__') for _ in payload.get('data', {}).keys()):
+            return payload
+
     payload['debugToolbar'] = OrderedDict([('panels', OrderedDict())])
 
     for panel in reversed(toolbar.enabled_panels):
