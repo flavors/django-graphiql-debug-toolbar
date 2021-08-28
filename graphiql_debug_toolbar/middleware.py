@@ -2,7 +2,7 @@ import json
 from collections import OrderedDict
 
 from django.template.loader import render_to_string
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from debug_toolbar.middleware import _HTML_TYPES
 from debug_toolbar.middleware import DebugToolbarMiddleware as BaseMiddleware
@@ -20,7 +20,7 @@ def set_content_length(response):
 
 
 def get_payload(request, response, toolbar):
-    content = force_text(response.content, encoding=response.charset)
+    content = force_str(response.content, encoding=response.charset)
     payload = json.loads(content, object_pairs_hook=OrderedDict)
     payload["debugToolbar"] = OrderedDict([("panels", OrderedDict())])
 
