@@ -34,8 +34,6 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Framework :: Django",
-    "Framework :: Django :: 2.0",
-    "Framework :: Django :: 2.1",
     "Framework :: Django :: 2.2",
     "Framework :: Django :: 3.0",
     "Framework :: Django :: 3.1",
@@ -53,7 +51,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.6"
 
-Django = ">=2.0"
+Django = ">=2.2"
 graphene-django = ">=2.0.0"
 django-debug-toolbar = ">=3.1"
 
