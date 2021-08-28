@@ -17,7 +17,8 @@ class DebugToolbarMiddlewareTests(testcases.TestCase):
 
     def test_graphiql(self):
         request = self.request_factory.get("/")
-        http_response = HttpResponse(headers={"Content-Length": 0})
+        http_response = HttpResponse()
+        http_response["Content-Length"] = 0
         get_response_mock = Mock(return_value=http_response)
 
         middleware = self.middleware(get_response_mock)
