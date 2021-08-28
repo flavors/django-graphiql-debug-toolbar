@@ -1,8 +1,3 @@
 {% load static %}
 
-<script
-    id="djGraphiQLDebug"
-    src="{% static 'graphiql_debug_toolbar/js/parse.js' %}"
-    data-loader-url="{% static 'debug_toolbar/img/ajax-loader.gif' %}"
-    data-render-panel-url="{% url 'djdt:render_panel' %}">
-</script>
+<script src="{% static 'graphiql_debug_toolbar/js/parse.js' %}"></script>
