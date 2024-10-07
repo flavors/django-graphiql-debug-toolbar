@@ -4,7 +4,14 @@ from collections import OrderedDict
 from django.template.loader import render_to_string
 from django.utils.encoding import force_str
 
-from debug_toolbar.middleware import _HTML_TYPES
+
+import debug_toolbar
+
+if debug_toolbar.VERSION < "4.4.6":
+    from debug_toolbar.middleware import _HTML_TYPES
+else:
+    from debug_toolbar.utils import _HTML_TYPES
+
 from debug_toolbar.middleware import DebugToolbarMiddleware as BaseMiddleware
 from debug_toolbar.toolbar import DebugToolbar
 from graphene_django.views import GraphQLView
