@@ -1,14 +1,21 @@
 (function(JSON) {
-    const parse = JSON.parse;
     const djDebug = document.getElementById("djDebug");
 
-    JSON.parse = function(text) {
-        const data = parse(text);
-
-        if (data === null || !data.hasOwnProperty("debugToolbar")) return data;
+    const stringify = JSON.stringify
+    JSON.stringify = function(data) {
+        if (data === null || !data.hasOwnProperty("debugToolbar")) return stringify(data);
 
         Object.entries(data.debugToolbar.panels).map(([id, panel]) => {
             if (panel.title) {
+                const sideContent = document.getElementById(`djdt-${id}`)
+                if (sideContent) {
+                    const linkContent = sideContent.querySelector("a");
+                    linkContent.innerHTML =
+                        `${panel.title}
+                        <br>
+                        <small>${panel.subtitle}</small>`
+                }
+
                 const content = djDebug.querySelector(`#${id}`);
 
                 content
@@ -23,15 +30,10 @@
                     content.querySelector(".djDebugPanelContent").prepend(loader);
                 }
             }
-            if (panel.subtitle) {
-                document
-                    .getElementById(`djdt-${id}`)
-                    .querySelector("small").textContent = panel.subtitle;
-            }
         });
         djDebug.setAttribute("data-store-id", data.debugToolbar.storeId);
 
         delete data.debugToolbar;
-        return data;
-    };
+        return stringify(data, null, 2);
+    }
 })(JSON);
